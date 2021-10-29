@@ -29,6 +29,7 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
   static const String message = loremIpsum;
   late final AnimationController controller;
   late final Animation<String> animation;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -36,6 +37,12 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
 
     controller = AnimationController(vsync: this, duration: _duration);
     animation = TypewriterTween(end: message).animate(controller);
+    // _scrollController.addListener(() {
+    //   print(_scrollController.offset);
+    // });
+    controller.addListener(() {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
   }
 
   @override
@@ -75,6 +82,7 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
         child: Container(
           alignment: Alignment.bottomCenter,
           child: SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -90,7 +98,7 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
                           return Text(
                             animation.value,
                             style: const TextStyle(
-                                fontSize: 19, fontFamily: 'SpecialElite'),
+                                fontSize: 20, fontFamily: 'SpecialElite'),
                           );
                         },
                       ),
