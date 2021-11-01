@@ -4,17 +4,6 @@
 
 import 'package:flutter/material.dart';
 
-class TypewriterTween extends Tween<String> {
-  TypewriterTween({String begin = '', String end = ''})
-      : super(begin: begin, end: end);
-
-  @override
-  String lerp(double t) {
-    var cutoff = (end!.length * t).round();
-    return end!.substring(0, cutoff);
-  }
-}
-
 class CustomTweenDemo extends StatefulWidget {
   const CustomTweenDemo({Key? key}) : super(key: key);
   static const String routeName = '/basics/custom_tweens';
@@ -24,24 +13,44 @@ class CustomTweenDemo extends StatefulWidget {
 }
 
 class _CustomTweenDemoState extends State<CustomTweenDemo>
-    with SingleTickerProviderStateMixin {
-  static const Duration _duration = Duration(seconds: 25);
-  static const String message = loremIpsum;
-  late final AnimationController controller;
-  late final Animation<String> animation;
-  ScrollController _scrollController = ScrollController();
+    with TickerProviderStateMixin {
+  final Duration _duration = const Duration(milliseconds: 100);
+  late AnimationController controller;
+  final ScrollController _scrollController = ScrollController();
+
+  final TextEditingController _teController = TextEditingController();
+  int index = 0;
+
+  bool isPlaying = false;
 
   @override
   void initState() {
     super.initState();
 
+    // 0 1
     controller = AnimationController(vsync: this, duration: _duration);
-    animation = TypewriterTween(end: message).animate(controller);
+
+    // controller = AnimationController(vsync: this, duration: _duration);
+    // animation = TypewriterTween(end: '').animate(controller);
     // _scrollController.addListener(() {
     //   print(_scrollController.offset);
     // });
+
     controller.addListener(() {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      if (isPlaying && index > 1) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed &&
+          isPlaying &&
+          index < _teController.text.length) {
+        index++;
+        setState(() {});
+
+        controller.reset();
+        controller.forward();
+      }
     });
   }
 
@@ -51,78 +60,103 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
     super.dispose();
   }
 
+  Widget _textFeild() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: TextField(
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          hintText: 'Input Text',
+        ),
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        controller: _teController,
+        onSubmitted: (String value) async {
+          await showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('대본암기도우미'),
+                content: Text('"$value"를 암기하도록 도와주겠습니다.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('암기하러가기'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _player() {
+    return Container(
+      color: const Color(0xFFFFFFFF),
+      alignment: Alignment.bottomCenter,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                // ABCD
+                // (stIndex,endIndex);
+                // 0 0 A
+                // 0 1 AB
+                _teController.text.substring(0, index),
+                style:
+                    const TextStyle(fontSize: 20, fontFamily: 'SpecialElite'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
         title: const Text('대본훑어보기'),
         actions: [
           MaterialButton(
             child: Text(
-              controller.status == AnimationStatus.completed
-                  ? '반대로 보기'
-                  : '대본 보기',
+              //3hang
+              isPlaying ? 'Stop!!' : '대본 보기',
             ),
             textColor: Colors.white,
             onPressed: () {
-              if (controller.status == AnimationStatus.completed) {
-                controller.reverse().whenComplete(() {
-                  setState(() {});
-                });
+              index = 0;
+              if (isPlaying) {
+                controller.stop();
+                controller.reset();
+                // 0.35 0.77
+                // 0-1
               } else {
-                controller.forward().whenComplete(() {
-                  setState(() {});
-                });
+                controller.forward();
               }
+              isPlaying = !isPlaying;
+              setState(() {});
             },
           ),
         ],
       ),
       body: SafeArea(
-        child: Container(
-          alignment: Alignment.bottomCenter,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: AnimatedBuilder(
-                        animation: animation,
-                        builder: (context, child) {
-                          return Text(
-                            animation.value,
-                            style: const TextStyle(
-                                fontSize: 20, fontFamily: 'SpecialElite'),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // 3 항 연산자 ( 조건 ? 참일때 : 거짓일때  )
+        child: isPlaying ? _player() : _textFeild(),
       ),
     );
   }
 }
-
-const String loremIpsum = '''
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요.,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요.,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요.,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요.,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요.,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요.,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요.,
-안녕하세요 저는 엄유주 입니다. 반갑습니다. 플러터는 재미있네요.,
-''';
