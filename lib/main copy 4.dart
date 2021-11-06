@@ -19,7 +19,7 @@
 //   Widget build(BuildContext context) {
 //     return const MaterialApp(
 //       title: _title,
-//       home: MyStatefulWidget(),
+//       home: CustomTweenDemo(),
 //     );
 //   }
 // }
@@ -51,8 +51,16 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       body: Center(
+//       appBar: AppBar(
+//         title: const Text('대본훑어보기'),
+//       ),
+//       body: Padding(
+//         padding: EdgeInsets.symmetric(horizontal: 16),
 //         child: TextField(
+//           decoration: InputDecoration(
+//             border: InputBorder.none,
+//             hintText: 'Input Text',
+//           ),
 //           keyboardType: TextInputType.multiline,
 //           maxLines: null,
 //           controller: _controller,
@@ -62,7 +70,7 @@
 //               builder: (BuildContext context) {
 //                 return AlertDialog(
 //                   title: const Text('대본암기도우미'),
-//                   content: Text('$value"를 암기하도록 도와주겠습니다.'),
+//                   content: Text('"$value"를 암기하도록 도와주겠습니다.'),
 //                   actions: <Widget>[
 //                     TextButton(
 //                       onPressed: () {

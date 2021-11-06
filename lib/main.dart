@@ -52,7 +52,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('대본훑어보기'),
+        title: const Text('Clipboard Reader'),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),

@@ -14,7 +14,7 @@ class CustomTweenDemo extends StatefulWidget {
 
 class _CustomTweenDemoState extends State<CustomTweenDemo>
     with TickerProviderStateMixin {
-  final Duration _duration = const Duration(milliseconds: 100);
+  final Duration _duration = const Duration(milliseconds: 50);
   late AnimationController controller;
   final ScrollController _scrollController = ScrollController();
 
@@ -122,14 +122,13 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
     );
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
-        title: const Text('대본훑어보기'),
+        title: const Text('Clipboard Reader'),
+        backgroundColor: const Color(0xFF414435),
         actions: [
           MaterialButton(
             child: Text(
