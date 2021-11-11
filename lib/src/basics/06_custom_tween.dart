@@ -14,7 +14,7 @@ class CustomTweenDemo extends StatefulWidget {
 
 class _CustomTweenDemoState extends State<CustomTweenDemo>
     with TickerProviderStateMixin {
-  final Duration _duration = const Duration(milliseconds: 50);
+  final Duration _duration = const Duration(milliseconds: 56);
   late AnimationController controller;
   final ScrollController _scrollController = ScrollController();
 
@@ -146,8 +146,11 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
               } else {
                 controller.forward();
               }
-              isPlaying = !isPlaying;
-              setState(() {});
+              setState(() {
+                isPlaying = !isPlaying;
+              });
+              // Q.A - setState안에다가
+              //isPlaying 넣는게 아닌지??
             },
           ),
         ],
