@@ -124,6 +124,8 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
 
   @override
   Widget build(BuildContext context) {
+
+    double sliderValue; //추가함
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
@@ -157,7 +159,22 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
       ),
       body: SafeArea(
         // 3 항 연산자 ( 조건 ? 참일때 : 거짓일때  )
-        child: isPlaying ? _player() : _textFeild(),
+        child: Column(
+          children: [
+            isPlaying ? _player() : _textFeild(),
+            Slider(
+              activeColor: Color(0xFF9E9E9E),
+              inactiveColor: Color(0xFF9E9E9E),
+              min: 50,
+              max: 100,
+              value: sliderValue ??= 0,
+              onChanged: (newValue) {
+                setState(() => sliderValue = newValue);
+              },
+            )
+            
+          ],
+        ),
       ),
     );
   }
