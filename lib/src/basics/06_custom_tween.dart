@@ -14,7 +14,7 @@ class CustomTweenDemo extends StatefulWidget {
 
 class _CustomTweenDemoState extends State<CustomTweenDemo>
     with TickerProviderStateMixin {
-  final Duration _duration = const Duration(milliseconds: 56);
+  double _currentSliderValue = 60;
   late AnimationController controller;
   final ScrollController _scrollController = ScrollController();
 
@@ -28,7 +28,12 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
     super.initState();
 
     // 0 1
-    controller = AnimationController(vsync: this, duration: _duration);
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: _currentSliderValue.round(),
+      ),
+    );
 
     // controller = AnimationController(vsync: this, duration: _duration);
     // animation = TypewriterTween(end: '').animate(controller);
@@ -124,8 +129,9 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
 
   @override
   Widget build(BuildContext context) {
-
-    double sliderValue; //추가함
+    controller.duration = Duration(
+      milliseconds: _currentSliderValue.round(),
+    ); //
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
@@ -161,18 +167,20 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
         // 3 항 연산자 ( 조건 ? 참일때 : 거짓일때  )
         child: Column(
           children: [
-            isPlaying ? _player() : _textFeild(),
+            Expanded(
+              child: isPlaying ? _player() : _textFeild(),
+            ),
             Slider(
-              activeColor: Color(0xFF9E9E9E),
-              inactiveColor: Color(0xFF9E9E9E),
-              min: 50,
-              max: 100,
-              value: sliderValue ??= 0,
-              onChanged: (newValue) {
-                setState(() => sliderValue = newValue);
+              value: _currentSliderValue,
+              min: 15,
+              max: 300,
+              label: _currentSliderValue.round().toString(),
+              onChanged: (double value) {
+                setState(() {
+                  _currentSliderValue = value;
+                });
               },
-            )
-            
+            ),
           ],
         ),
       ),
