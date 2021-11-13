@@ -130,7 +130,7 @@ class _CustomTweenDemoState extends State<CustomTweenDemo>
   @override
   Widget build(BuildContext context) {
     controller.duration = Duration(
-      milliseconds: _currentSliderValue.round(),
+      milliseconds: 315 - _currentSliderValue.round(),
     ); //
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
